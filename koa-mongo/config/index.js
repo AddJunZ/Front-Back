@@ -1,5 +1,8 @@
 const mongoose = require('mongoose')
-mongoose.connect('mongodb://localhost:27017/test', { useNewUrlParser: true });
+const DB_URL = 'mongodb://localhost:27017/test'
+
+//启动新的字符串解析器   最大连接数
+mongoose.connect(DB_URL, { useNewUrlParser: true, poolSize: 4 });
 //数据库
 const db = mongoose.connection;
 db.on('error', () => {

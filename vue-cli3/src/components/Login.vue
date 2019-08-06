@@ -1,107 +1,139 @@
 <template>
-  <div class="enter">
-    <div class="login-wrapper">
-      <div class="login-items">
-        <span>用户名：</span>
-        <input type="text" v-model="username" />
-      </div>
-      <div class="login-items">
-        <span>密码：</span>
-        <input type="password" v-model="password" />
-      </div>
-    </div>
-    <div class="submit-items">
-      <div class="submit" @click="submit">提交</div>
-      <div class="submit" @click="regist">注册</div>
-    </div>
+  <div class="login">
+    <el-tabs v-model="activeName" @tab-click="handleClick">
+      <el-tab-pane label="用户登录" name="login">
+        <el-form ref="submitform" :model="submitform" label-width=
+        "80px" :rules="rules">
+          <el-form-item label="登录名" prop="name">
+            <el-input v-model="submitform.name"></el-input>
+          </el-form-item>
+          <el-form-item label="密码" prop="pwd">
+            <el-input v-model="submitform.pwd"></el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="onSubmit">登录</el-button>
+            <el-button @click="resetForm('submitform')">取消</el-button>
+          </el-form-item>
+        </el-form>
+      </el-tab-pane>
+      <el-tab-pane label="用户注册" name="regist">
+        <el-form ref="registform" :model="registform" label-width="80px" :rules="rules">
+          <el-form-item label="注册名" prop="name">
+            <el-input v-model="registform.name"></el-input>
+          </el-form-item>
+          <el-form-item label="密码" prop="pwd">
+            <el-input v-model="registform.pwd"></el-input>
+          </el-form-item> 
+          <el-form-item label="确认密码" prop="checkpwd">
+            <el-input v-model="registform.checkpwd"></el-input>
+          </el-form-item>                    
+          <el-form-item>
+            <el-button type="primary" @click="onRegist">注册</el-button>
+            <el-button @click="resetForm('registform')">重置</el-button>
+          </el-form-item>          
+        </el-form>
+      </el-tab-pane>
+    </el-tabs>
   </div>
 </template>
 <script>
-import { log } from 'util';
 export default {
   name: "Login",
   data() {
+    var pwdValidator = (rule,value,callback) =>{
+      if(value == '')callback(new Error('请输入密码'))
+      else if (this.registform.checkpwd !== '') this.$refs.registform.validateField('checkpwd');
+      callback();
+    }
+    var checkPwd = (rule,value,callback) => {
+      if(value == '')callback(new Error('请再次输入密码'))
+      else if(value != this.registform.pwd){
+        callback('两次输入不一致')
+      }
+      callback();
+    }
     return {
-      username: "AddJunZ",
-      password: "123"
+      activeName:'login',
+      //登录的
+      submitform:{
+        name:'',
+        pwd:''
+      },
+      //注册的
+      registform:{
+        name:'',
+        pwd:'',
+        checkpwd:''
+      },
+      rules:{
+        name:[{required:true,message:'请输入用户名',trigger:'blur'}],
+        pwd:{required:true,validator:pwdValidator,trigger:'blur'},
+        checkpwd:{required:true,validator:checkPwd,trigger:'blur'}
+      },
+      resetForm(formName) {
+        this.$refs[formName].resetFields();
+      },
     };
   },
   methods: {
-    submit() {
-      this.$axios
-        .post("/user/login", {
-          username: this.username,
-          password: this.password
-          //应该还有一个身份字段的
-        })
-        .then(res => {
-          console.log(res.data.data);
-        });
+    onSubmit() {
+      this.$refs.submitform.validate((valid) => {
+        if (valid) {
+          this.$axios.post("/user/login", {
+            username: this.submitform.name,
+            password: this.submitform.pwd
+          }).then(res => {
+            if (res.status == 200 && res.data.code == 0) {
+              this.$message({
+                type: 'success',
+                message: '登录成功'
+              });
+            } else {
+              this.$message({
+                type:'error',
+                message:res.data.msg
+              })
+            }          
+          });
+        }
+      });      
     },
-    regist() {
-      //通过注册按钮只能申请学生和快递员账号
-      console.log("注册");
-      this.$axios
-        .post("/user/regist", {
-          username: this.username,
-          password: this.password
-        })
-        .then(res => {
-          if (res.status == 200) {
-            console.log("注册成功", res);
-          } else {
-            console.log("注册失败");
-          }
-        });
+    onRegist() {
+      this.$refs.registform.validate((valid) => {
+        if(valid){
+          this.$axios.post("/user/regist", {
+            username: this.registform.name,
+            password: this.registform.pwd
+          }).then(res => {
+              console.log(res);
+            if (res.status == 200 && res.data.code == 0) {
+              this.$message({
+                type: 'success',
+                message: '注册成功'
+              });
+            } else {
+              this.$message({
+                type:'error',
+                message:res.data.msg
+              })
+            }
+          }).catch(err=>{
+            console.log(err);
+          })
+        }
+      })
+    },
+    handleClick(){
+
     }
   }
 };
 </script>
 <style scoped>
-.login-wrapper {
-  width: 400px;
-  margin: 0 auto;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  flex-direction: column;
-}
-.login-items {
-  margin: 14px 0;
-  width: 350px;
-  display: flex;
-  justify-content: center;
-  align-content: center;
-  text-align: right;
-}
-.login-items > span {
-  user-select: none;
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-}
-.login-items > input {
-  padding: 4px 10px;
-  border-radius: 6px;
-  outline: none;
-  border: 1px solid rgba(65, 184, 131, 0.5);
-  flex: 3.5;
-  width: 200px;
-  height: 36px;
-}
-.submit-items {
-  display: flex;
-  justify-content: center;
-  margin: 0 auto;
-  width: 350px;
-}
-.submit {
-  border-radius: 10px;
-  padding: 6px 12px;
-  margin: 0 20px;
-  cursor: pointer;
-  background-color: rgba(65, 184, 131, 0.5);
+.login{
+  width:400px;
+  height:600px;
+  margin:0 auto;
 }
 </style>
 
