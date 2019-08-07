@@ -24,6 +24,7 @@ router.post('/login', async ctx => {
     }else{
         if(password == doc.password){
             ctx.status = 200;
+            // 这里需要返回一个token
             ctx.body = {
                 code:0,
                 msg:'登录成功'

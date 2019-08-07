@@ -14,8 +14,10 @@
     "koa-static": "^5.0.0"
   },
   "dependencies": {
+    "jsonwebtoken": "^8.5.1",
     "koa-better-body": "^3.0.4",
     "koa-cors": "^0.0.16",
+    "koa-jwt": "^3.6.0",
     "mongodb": "^3.2.7",
     "mongoose": "^5.6.5"
   }
