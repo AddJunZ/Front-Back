@@ -4,15 +4,15 @@ const jwt = require('jsonwebtoken')
 const createToken = (user_id) => {
     //密钥
     let token = jwt.sign({ user_id: user_id }, 'AddJunZ',{
-        expiresIn:'120s'
+        expiresIn:'180s'
     })
     return token;
 }
 
 const checkToken = async (ctx,next) => {
-    console.log(ctx.request)
     let authorization = ctx.get('Authorization');
     if(authorization == ''){
+        console.log('该有token的地方没有token丢401')
         ctx.throw(401,'no token detected in http headerAuthorization')
     }
     let token = authorization.split(' ')[1];

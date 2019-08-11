@@ -68,8 +68,8 @@ const findUser = (username) => {
 
 
 //注册接口
-router.post('/regist',async ctx => {
-    console.log('后台注册接口');
+router.post('/regist',checkToken,async ctx => {
+    console.log('进入注册接口');
     let { username, password } = ctx.request.fields;
     // 这是直接新建实例的doc，或者是新建实例后用.语法，再调用save
     const student = new Stu({ username: username, password: password });
