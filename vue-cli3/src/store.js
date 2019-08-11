@@ -4,14 +4,24 @@ import Vuex from 'vuex'
 Vue.use(Vuex)
 
 export default new Vuex.Store({
-    state:{
+    state: {
         //将token放在session中防止
-        token:window.sessionStorage.getItem('token'),
+        token: window.sessionStorage.getItem('token'),
+        username: window.sessionStorage.getItem('username')
     },
-    mutations:{
-        
+    mutations: {
+        login: (state, { username, token }) => {
+            state.token = token;
+            state.username = username;
+            window.sessionStorage.setItem('token', token);
+            window.sessionStorage.setItem('username', username);
+        },
+        logout: (state) => {
+            state.token = null;
+            window.sessionStorage.removeItem('token');
+        }
     },
-    actions:{
-        
+    actions: {
+
     }
 })

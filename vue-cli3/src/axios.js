@@ -5,15 +5,15 @@ import router from './router'
 Axios.defaults.baseURL = 'http://localhost:3000';
 
 //request拦截器
-Axios.interceptors.request.use(config => {
-    //如果token存在
-    if (store.state.token) {
-        config.header.Authorization = `token ${store.state.token}`
-    }
-    return config;
-}, err => {
-    return Promise.reject(err.response)
-})
+// Axios.interceptors.request.use(config => {
+//     //如果token存在，把token携带过去
+//     if (store.state.token) {
+//         config.header.Authorization = `token ${store.state.token}`
+//     }
+//     return config;
+// }, err => {
+//     return Promise.reject(err.response)
+// })
 
 //response拦截器
 Axios.interceptors.response.use(response => {
@@ -26,6 +26,7 @@ Axios.interceptors.response.use(response => {
                     path: 'login',
                     query: { redirect: router.currentRoute.fullPath }
                 })
+                // console.log('还没有登录');
             break;    
         }
     }

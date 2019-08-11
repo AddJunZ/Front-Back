@@ -1,6 +1,7 @@
 const Router = require('koa-router')
 const router = new Router()
 const Stu = require('../models/stu')
+const { createToken, checkToken } = require('../utils/token')
 
 
 router.get('/searchPerson', async ctx => {
@@ -15,25 +16,38 @@ router.post('/login', async ctx => {
     let { username, password } = ctx.request.fields;
     let doc = await findUser(username);
     //用户不存在
-    if(!doc){
+    if (!doc) {
         ctx.status = 200;
         ctx.body = {
-            code:1,
-            msg:'用户不存在'
+            code: 1,
+            msg: '用户不存在'
         }
-    }else{
-        if(password == doc.password){
+    } else {
+        if (password == doc.password) {
             ctx.status = 200;
-            // 这里需要返回一个token
+            // 这里需要返回一个token，还要把token存在数据库里？
+            let token = createToken(username)
+            doc.token = token;
+            // 保存token到数据库
+            await new Promise((resolve,reject)=>{
+                doc.save(err=>{
+                    if(err){
+                        reject();
+                    }else{
+                        resolve();
+                    }
+                })
+            })
             ctx.body = {
-                code:0,
-                msg:'登录成功'
-            }            
-        }else{
+                code: 0,
+                msg: '登录成功',
+                token
+            }
+        } else {
             ctx.status = 200;
             ctx.body = {
-                code:1,
-                msg:'密码错误'
+                code: 1,
+                msg: '密码错误'
             }
         }
     }
@@ -54,9 +68,12 @@ const findUser = (username) => {
 
 
 //注册接口
-router.post('/regist', async ctx => {
+router.post('/regist',async ctx => {
+    console.log('后台注册接口');
     let { username, password } = ctx.request.fields;
+    // 这是直接新建实例的doc，或者是新建实例后用.语法，再调用save
     const student = new Stu({ username: username, password: password });
+    //数据库中的doc
     let doc = await findUser(username);
     if (doc) {
         console.log('用户名已经存在');

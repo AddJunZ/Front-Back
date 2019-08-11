@@ -8,8 +8,8 @@ const stuSchema = mongoose.Schema({
         require: true,
         type: String
     },
-    uid: {
-        type: Number
+    token: {
+        type: String
     }
 })
 module.exports = mongoose.model('Stu', stuSchema);

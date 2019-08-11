@@ -88,6 +88,11 @@ export default {
                 type: 'success',
                 message: '登录成功'
               });
+              let token = res.data.token;
+              this.$store.commit('login',{
+                username: this.submitform.name,
+                token
+              });
             } else {
               this.$message({
                 type:'error',
@@ -105,7 +110,7 @@ export default {
             username: this.registform.name,
             password: this.registform.pwd
           }).then(res => {
-              console.log(res);
+              console.log('注册',res);
             if (res.status == 200 && res.data.code == 0) {
               this.$message({
                 type: 'success',
@@ -118,7 +123,7 @@ export default {
               })
             }
           }).catch(err=>{
-            console.log(err);
+            console.log('注册错误',err);
           })
         }
       })

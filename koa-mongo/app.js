@@ -14,6 +14,7 @@ app.use(body());
 router.use('/user', require('./routes/user'))
 // router.use('/waiter',require('./routes/waiter'))
 app.use(router.routes())
+app.use(router.allowedMethods())
 
 app.listen(3000, () => {
     console.log('监听3000');

@@ -26,3 +26,10 @@ var Human = mongoose.Schema({
 
 })
 ```
+
+### 新建某一特定model的doc有两种方法
+1. 新建doc，用点语法赋值，再调用save
+2. 直接通过new的方式
+
+### koa-router的点
+1. ```koa-router```在路由参数后，可以跟多个有```next```属性，也可以顺序
