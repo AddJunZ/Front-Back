@@ -22,6 +22,8 @@ export default new Vuex.Store({
         }
     },
     actions: {
-
+        login:({commit},data)=>{
+            commit('login',data)
+        }
     }
 })

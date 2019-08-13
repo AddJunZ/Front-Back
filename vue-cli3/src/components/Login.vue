@@ -1,6 +1,6 @@
 <template>
   <div class="login">
-    <el-tabs v-model="activeName" @tab-click="handleClick">
+    <el-tabs v-model="activeName">
       <el-tab-pane label="用户登录" name="login">
         <el-form ref="submitform" :model="submitform" label-width=
         "80px" :rules="rules">
@@ -93,6 +93,7 @@ export default {
                 username: this.submitform.name,
                 token
               });
+              this.$router.replace('/home')
             } else {
               this.$message({
                 type:'error',
@@ -127,9 +128,6 @@ export default {
           })
         }
       })
-    },
-    handleClick(){
-
     }
   }
 };
